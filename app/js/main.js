@@ -12,10 +12,11 @@ angular.module('app', [
 require('./routes');
 
 require('./services/base64');
-require('./services/spider');
+require('./services/project');
 require('./services/state');
 require('./filters/pathEncode');
 require('./filters/fileSize');
 require('./filters/encodeURIComponent');
+require('./controllers/controls');
 require('./controllers/home');
 require('./controllers/details');

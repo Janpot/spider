@@ -9,6 +9,14 @@
   </head>
   <body>
     
+    <div ng-controller="controls" class="header">
+      <form>
+        <input ng-model="uri">
+        <button ng-if="project.status === 'idle'" ng-click="crawl(uri)">Crawl</button>
+        <button ng-if="project.status === 'crawling'" ng-click="cancel()">Stop</button>
+      </form>
+    </div>
+    
     <div ng-view="">
         Loading...
     </div>

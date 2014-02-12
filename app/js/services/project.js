@@ -1,6 +1,6 @@
 /*global angular, io*/
 
-angular.module('app').factory('spider', function (
+angular.module('app').factory('project', function (
   $rootScope
 ) {
   'use strict';
@@ -117,31 +117,44 @@ angular.module('app').factory('spider', function (
   LinkList.prototype.exists = function (uri) {
     return uri in this._map;
   };
-  
-  
     
-  function crawl(url) {
-    var socket = io.connect('/spider'),
-        list = new LinkList();
     
-    socket.emit('get', { url: url });
     
-    socket.on('data', function (data) {
-      var needsUpdate = list.addAll(data);
-      if (needsUpdate) {
+    
+  function Project() {
+    this.url = null;
+    this.list = null;
+    this._socket = io.connect('/spider');
+    this.status = 'idle';
+    
+    this._socket.on('data', function (data) {
+      var needsScopeUpdate = this.list.addAll(data);
+      if (needsScopeUpdate) {
         $rootScope.$apply();
       }
-    });
+    }.bind(this));
     
-    socket.on('end', function () {
-      console.log('done!');
-    });
-    
-    return list;
+    this._socket.on('end', function () {
+      this.status = 'idle';
+      $rootScope.$apply();
+    }.bind(this));
   }
     
-  return {
-    crawl: crawl
+  Project.prototype.crawl = function (uri) {
+    if (this.status === 'idle') {
+      this.status = 'crawling';
+      this.uri = uri;
+      this.list = new LinkList();
+      this._socket.emit('get', { url: uri });
+    }
   };
+    
+  Project.prototype.cancel = function () {
+    this._socket.emit('cancel');
+  };
+    
+    
+    
+  return new Project();
   
 });

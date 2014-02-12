@@ -3,16 +3,12 @@
 angular.module('app').controller('details', function (
   $scope,
   uri,
-  state
+  project
 ) {
   'use strict';
 
-  if (state.result) {
-    $scope.row = state.result.get(uri);
+  if (project.list) {
+    $scope.row = project.list.get(uri);
   }
-    
-  $scope.hasLink = function (uri) {
-    return state.result.exists(uri);
-  };
   
 });

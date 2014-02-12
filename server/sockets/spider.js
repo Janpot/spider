@@ -27,6 +27,12 @@ function connect(socket) {
         });
 
     })
+    .on('cancel', function () {
+      if (spiderStream) {
+        console.log('cancelling');
+        spiderStream.cancel();
+      }
+    })
     .on('disconnect', function () {
       if (spiderStream) {
         spiderStream.cancel();

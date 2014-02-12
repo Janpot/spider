@@ -21,6 +21,7 @@
   </dd>
   <dt ng-show="row.referrers">Found on:</dt>
   <dd ng-show="row.referrers" ng-repeat="referrer in row.referrers">
+    {{referrer.count}} time(s) on
     <a ng-href="#/{{referrer.uri | pathEncode}}">{{referrer.uri}}</a>
   </dd>
 </dl>

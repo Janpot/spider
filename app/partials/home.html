@@ -1,9 +1,4 @@
-<form>
-  <input ng-model="url">
-  <button ng-click="crawl(url)">Crawl</button>
-</form>
-
-<table ng-show="result.length">
+<table ng-show="project.list.count()">
   <thead>
     <tr>
       <th>Uri</th>
@@ -13,7 +8,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="row in result">
+    <tr ng-repeat="row in project.list.view">
       <td><a href="#/{{row.uri | pathEncode}}">{{row.uri}}</a></td>
       <td>{{row.statusCode}}</td>
       <td>{{row.type}}</td>

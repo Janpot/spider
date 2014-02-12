@@ -1,8 +1,9 @@
 /*global angular*/
 
-angular.module('app').controller('home', function (
+angular.module('app').controller('controls', function (
   $scope,
-  project
+  project,
+  $location
 ) {
   'use strict';
     
@@ -11,8 +12,10 @@ angular.module('app').controller('home', function (
   $scope.project = project;
   
   $scope.crawl = function (uri) {
+    $location.path('/').search('page', null);
     project.crawl(uri);
-    $scope.rows = project.list.view;
   };
+    
+  $scope.cancel = project.cancel.bind(project);
   
 });
