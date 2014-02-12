@@ -24,12 +24,16 @@ function connect(socket) {
         .on('end', function () {
           console.log('stream ended');
           socket.emit('end');
+        })
+        .on('error', function (error) {
+          console.log('stream error');
+          socket.emit('end');
         });
 
     })
     .on('cancel', function () {
       if (spiderStream) {
-        console.log('cancelling');
+        console.log('canceling');
         spiderStream.cancel();
       }
     })

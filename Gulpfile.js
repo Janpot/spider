@@ -82,7 +82,9 @@ gulp.task('lint', ['jshint', 'recess']);
 gulp.task('mocha', function () {
   gulp.src(['./test/server/**/*.spec.js'], { read: false })
     .pipe(tasks.mocha())
-    .on('error', function () {});
+    .on('error', function (error) {
+      console.log(error.name, error.message);
+    });
 });
 
 gulp.task('mocha-watch', ['mocha'], function () {

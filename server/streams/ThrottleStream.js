@@ -1,55 +1,59 @@
 'use strict';
 
-var Duplex = require('stream').Duplex,
+var Transform = require('stream').Transform,
     util   = require('util');
 
 
 function ThrottleStream(interval) {
-  Duplex.call(this, {
+  Transform.call(this, {
     objectMode: true
   });
-  this._queue = [];
+  this._queue = null;
   this._interval = interval;
-  this._accepts = false;
   this._lastPushTime = 0;
   this._waitTimeout = null;
 }
-util.inherits(ThrottleStream, Duplex);
+util.inherits(ThrottleStream, Transform);
 
-ThrottleStream.prototype._write = function (data, encoding, callback) {
+ThrottleStream.prototype._transform = function (data, encoding, callback) {
+  if (!this._queue) {
+    this._queue = [];
+  }
   this._queue.push(data);
-  this._streamData();
+  this._scheduleFlush();
   callback(null);
 };
 
-ThrottleStream.prototype._read = function () {
-  this._accepts = true;
-  this._streamData();
+ThrottleStream.prototype._flush = function (callback) {
+  this._scheduleFlush(callback);
 };
 
-ThrottleStream.prototype._streamData = function () {
+ThrottleStream.prototype._scheduleFlush = function (callback) {
+  var now = Date.now(),
+      timeSinceLastPush = now - this._lastPushTime,
+      waitTime = Math.max(this._interval - timeSinceLastPush, 0);
+  
   if (this._waitTimeout) {
     clearTimeout(this._waitTimeout);
     this._waitTimeout = null;
   }
   
-  var now = Date.now(),
-      timeSinceLastPush = now - this._lastPushTime,
-      waitTime = this._interval - timeSinceLastPush;
+  this._waitTimeout = setTimeout(function () {
+    if (this._queue) {
+      this.push(this._queue);
+      this._queue = null;
+    }
+    
+    if (callback) {
+      callback(null);
+    }
+    
+    this._lastPushTime = Date.now();
+  }.bind(this), waitTime);
   
-  if (this._accepts && this._queue.length > 0 && waitTime < 0) {
-    // push calls _read so clear the _queue first
-    var toPush = this._queue;
-    this._queue = [];
-    this._lastPushTime = now;
-    this._accepts = this.push(toPush);
-  } else {
-    // schedule push
-    this._waitTimeout = setTimeout(
-      this._streamData.bind(this),
-      waitTime
-    );
-  }
 };
+
+
+
 
 module.exports = ThrottleStream;
