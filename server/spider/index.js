@@ -4,7 +4,7 @@ var request = require('request'),
     cheerio = require('cheerio'),
     URL = require('url'),
     util = require('util'),
-    Readable = require('stream').Readable,
+    BufferStream = require('../streams').BufferStream,
     Q = require('q'),
     checksum = require('checksum');
 
@@ -44,40 +44,6 @@ function parseContentType(typeStr) {
 
 
 
-function LinkStream() {
-  Readable.call(this, {
-    objectMode: true
-  });
-  this._links = [];
-  this._ended = false;
-  this._accepts = false;
-}
-util.inherits(LinkStream, Readable);
-
-LinkStream.prototype._read = function () {
-  this._accepts = true;
-  this._streamData();
-};
-
-LinkStream.prototype._streamData = function () {
-  while (this._accepts && this._links.length > 0) {
-    this._accepts = this.push(this._links.shift());
-  }
-};
-
-LinkStream.prototype.addLink = function (link) {
-  if (this._ended) {
-    throw new Error('Stream already ended');
-  } else if (link === null) {
-    this._ended = true;
-  }
-  
-  this._links.push(link);
-  this._streamData();
-};
-
-
-
 
 function Cache() {
   this._store = {};
@@ -92,29 +58,111 @@ Cache.prototype.get = function (url) {
 };
 
 
-var HARD_DOWNLOAD_LIMIT = 10000000; //100 kB
+var HARD_DOWNLOAD_LIMIT = 10000000, //10 MB
+    MAX_COUNT           = 1000;
+
+
 
 
 function Spider(options) {
+  BufferStream.call(this);
   options = options || {};
   
-  this._cache = new Cache();
-  this._stream = new LinkStream();
+  this._linkCache = new Cache();
+  this._queue = [];
   this._pending = 0;
+  this._maxConcurrent = 10;
+  this._canceled = false;
+  
+  this.maxDepth = 2;
+  
   this._totalDownloadSize = 0;
   this.maxDownloadSize = Math.min(
     options.maxDownloadSize || HARD_DOWNLOAD_LIMIT,
     HARD_DOWNLOAD_LIMIT
   );
-  this.maxDepth = 2;
+  
+  this._totalCount = 0;
+  this.maxCount = Math.min(
+    options.maxDownloadSize || MAX_COUNT,
+    MAX_COUNT
+  );
 }
+util.inherits(Spider, BufferStream);
 
 Spider.prototype._normalizeUrl = function (url) {
   return URL.parse(url).href;
 };
 
 
-Spider.prototype._process = function (url, depth) {
+
+
+
+Spider.prototype._enqueue = function (url, extraInfo) {
+  if (!this._canceled) {
+    this._queue.push({
+      url: url,
+      extraInfo: extraInfo || {}
+    });
+  }
+  this._consumeQueue();
+};
+
+
+Spider.prototype.downloadSizeExceeded = function () {
+  return this._totalDownloadSize >= this.maxDownloadSize;
+};
+
+Spider.prototype.maxCountExceeded = function () {
+  return this._totalCount >= this.maxCount;
+};
+
+
+Spider.prototype.cancel = function () {
+  if (!this._canceled) {
+    this._canceled = true;
+    this._queue = [];
+  }
+};
+
+
+Spider.prototype._consumeQueue = function () {
+  var forceEnd =
+      this.downloadSizeExceeded() ||
+      this.maxCountExceeded();
+  
+  if (forceEnd) {
+    this.cancel();
+  }
+  
+  if (this._queue.length <= 0) {
+    if (this._pending <= 0) {
+      this._put(null);
+    }
+  } else if (this._pending < this._maxConcurrent) {
+    
+    this._totalCount += 1;
+    this._pending += 1;
+    var nextUp = this._queue.shift();
+
+    this._processUrl(nextUp.url)
+      .then(function (result) {
+        Object.keys(nextUp.extraInfo)
+          .forEach(function (key) {
+            result[key] = nextUp.extraInfo[key];
+          }.bind(this));
+        this._put(result);
+      }.bind(this))
+      .fin(function () {
+        this._pending -= 1;
+        this._consumeQueue();
+      }.bind(this));
+    
+  }
+};
+
+
+Spider.prototype._request = function (url) {
   var deferred = Q.defer();
   
   var end = function (error, info) {
@@ -126,14 +174,10 @@ Spider.prototype._process = function (url, depth) {
     deferred.resolve(toCache);
   }.bind(this);
 
-  var overMax = this._totalDownloadSize > this.maxDownloadSize;
+  var overMax = this._totalDownloadSize >= this.maxDownloadSize;
   
   if (overMax) {
     return end(new Error('Download size exceeded'));
-  }
-  
-  if (depth > this.maxDepth) {
-    return end(new Error('Depth exceeded'));
   }
   
   request({
@@ -159,7 +203,7 @@ Spider.prototype._process = function (url, depth) {
         return end(null, basic);
       }
       
-      this._get(basic.redirectTo, {
+      this._enqueue(basic.redirectTo, {
         redirectFrom: url
       });
       return end(null, basic);
@@ -191,9 +235,9 @@ Spider.prototype._process = function (url, depth) {
             count: counts[href]
           };
           
-          this._get(href, {
+          this._enqueue(href, {
             referrers: [ thisReferral ]
-          }, depth + 1);
+          });
         }.bind(this));
     }
 
@@ -205,45 +249,33 @@ Spider.prototype._process = function (url, depth) {
 };
 
 
-Spider.prototype._get = function (url, urlConfig, depth) {
+Spider.prototype._processUrl = function (url) {
   url = this._normalizeUrl(url);
-  urlConfig = urlConfig || {};
   
-  this._pending += 1;
-  
-  var cachePromise = this._cache.get(url)
+  var cachePromise = this._linkCache.get(url)
     .then(function onCacheReturn(info) {
       if (info) {
         return info;
       } else {
-        return this._process(url, depth);
+        return this._request(url);
       }
     }.bind(this));
   
-  this._cache.add(url, cachePromise);
+  this._linkCache.add(url, cachePromise);
   
   return cachePromise
     .then(function (info) {
-      var toStream = JSON.parse(JSON.stringify(info));
-      Object.keys(urlConfig)
-        .forEach(function (key) {
-          toStream[key] = urlConfig[key];
-        }.bind(this));
-      this._stream.addLink(toStream);
-      return toStream;
-    }.bind(this))
-    .fin(function () {
-      this._pending -= 1;
-      if (this._pending <= 0) {
-        this._stream.addLink(null);
-      }
+      // return a copy to not mess with cached instance
+      return JSON.parse(JSON.stringify(info));
     }.bind(this));
 };
 
 Spider.prototype.get = function (url) {
   this._mainHost = URL.parse(url).host;
-  this._get(url, null, 0);
-  return this._stream;
+  this._enqueue(url, {
+    depth: 0
+  });
+  return this;
 };
 
 exports.get = function (url, options) {
