@@ -1,0 +1,28 @@
+<dl>
+  <dt>Uri</dt>
+  <dd>{{row.uri}}</dd>
+  <dt>Status</dt>
+  <dd>{{row.statusCode}}</dd>
+  <dt>Type</dt>
+  <dd>{{row.type}}</dd>
+  <dt>Checksum</dt>
+  <dd>{{row.checksum}}</dd>
+  <dt>Size</dt>
+  <dd>{{row.size | fileSize:1}}</dd>
+  <dt ng-show="row.redirectTo">Redirects to:</dt>
+  <dd ng-show="row.redirectTo">
+    <a ng-if="hasLink(row.redirectTo)" ng-href="#/details?uri={{row.redirectTo | encodeURIComponent}}">{{row.redirectTo}}</a>
+    <span ng-if="!hasLink(row.redirectTo)">{{row.redirectTo}}</span>
+  </dd>
+  <dt ng-show="row.redirectFroms">Redirects from:</dt>
+  <dd ng-show="row.redirectFroms" ng-repeat="redirectUri in row.redirectFroms">
+    <a ng-if="hasLink(redirectUri)" ng-href="#/details?uri={{redirectUri | encodeURIComponent}}">{{redirectUri}}</a>
+    <span ng-if="!hasLink(redirectUri)">{{redirectUri}}</span>
+  </dd>
+  <dt ng-show="row.referrers">Found on:</dt>
+  <dd ng-show="row.referrers" ng-repeat="referrer in row.referrers">
+    <a ng-if="hasLink(referrer.uri)" ng-href="#/details?uri={{referrer.uri | encodeURIComponent}}">{{referrer.uri}}</a>
+    <span ng-if="!hasLink(referrer.uri)">{{referrer.uri}}</span>
+  </dd>
+</dl>
+

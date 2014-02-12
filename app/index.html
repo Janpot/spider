@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+  <head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <meta name="user" content="<%= JSON.stringify(user) %>">
+      
+    <link rel="stylesheet" href="styles/main.css"/>
+  </head>
+  <body>
+    
+    <div ng-view="">
+        Loading...
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

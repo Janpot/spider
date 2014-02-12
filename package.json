@@ -1,0 +1,57 @@
+{
+  "name": "spider",
+  "version": "0.0.1",
+  "description": "Web spider.",
+  "main": "./server",
+  "dependencies": {
+    "config": "~0.4.32",
+    "express": "~3.4.7",
+    "request": "~2.33.0",
+    "cheerio": "~0.13.1",
+    "socket.io": "~0.9.16",
+    "q": "~1.0.0",
+    "checksum": "~0.1.1"
+  },
+  "napa": {
+    "angular": "angular/bower-angular",
+    "angular-route": "angular/bower-angular-route",
+    "angular-animate": "angular/bower-angular-animate"
+  },
+  "devDependencies": {
+    "napa": "~0.3.0",
+    "mocha": "~1.17.1",
+    "chai": "~1.9.0",
+    "jshint": "~2.4.1",
+    "jshint-stylish": "~0.1.5",
+    "karma-mocha": "~0.1.1",
+    "karma-mocha-reporter": "~0.2.0",
+    "karma-chrome-launcher": "~0.1.2",
+    "karma-chai": "0.0.2",
+    "karma-phantomjs-launcher": "~0.1.2",
+    "gulp": "~3.5.2",
+    "gulp-load-tasks": "~0.1.1",
+    "gulp-browserify": "~0.4.3",
+    "gulp-less": "~1.2.1",
+    "gulp-util": "~2.2.14",
+    "gulp-jshint": "~1.4.0",
+    "gulp-recess": "~0.2.0",
+    "gulp-csso": "~0.2.3",
+    "gulp-ngmin": "~0.1.2",
+    "gulp-uglify": "~0.2.1",
+    "gulp-if": "0.0.5",
+    "gulp-mocha": "~0.4.1",
+    "gulp-karma": "0.0.2",
+    "nock": "~0.27.2",
+    "gulp-nodemon": "~0.1.2",
+    "gulp-coverage": "0.0.17"
+  },
+  "scripts": {
+    "install": "napa",
+    "build": "gulp build",
+    "start": "node .",
+    "test": "gulp test"
+  },
+  "engines": {
+    "node": ">=0.10"
+  }
+}

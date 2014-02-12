@@ -1,0 +1,24 @@
+<form>
+  <input ng-model="url">
+  <button ng-click="crawl(url)">Crawl</button>
+</form>
+
+<table ng-show="result.length">
+  <thead>
+    <tr>
+      <th>Uri</th>
+      <th>Status</th>
+      <th>Type</th>
+      <th>Size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="row in result">
+      <td><a ng-href="#/details?uri={{row.uri | encodeURIComponent}}">{{row.uri}}</a></td>
+      <td>{{row.statusCode}}</td>
+      <td>{{row.type}}</td>
+      <td>{{row.size | fileSize:1}}</td>
+    </tr>
+  </tbody>
+</table>
+
