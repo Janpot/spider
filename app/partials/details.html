@@ -1,6 +1,8 @@
+<a href="#/">Back to list</a>
+
 <dl>
   <dt>Uri</dt>
-  <dd>{{row.uri}}</dd>
+  <dd><a href="{{row.uri}}" target="_blank">{{row.uri}}</a></dd>
   <dt>Status</dt>
   <dd>{{row.statusCode}}</dd>
   <dt>Type</dt>
@@ -11,18 +13,15 @@
   <dd>{{row.size | fileSize:1}}</dd>
   <dt ng-show="row.redirectTo">Redirects to:</dt>
   <dd ng-show="row.redirectTo">
-    <a ng-if="hasLink(row.redirectTo)" ng-href="#/details?uri={{row.redirectTo | encodeURIComponent}}">{{row.redirectTo}}</a>
-    <span ng-if="!hasLink(row.redirectTo)">{{row.redirectTo}}</span>
+    <a ng-href="#/{{row.redirectTo | pathEncode}}">{{row.redirectTo}}</a>
   </dd>
   <dt ng-show="row.redirectFroms">Redirects from:</dt>
   <dd ng-show="row.redirectFroms" ng-repeat="redirectUri in row.redirectFroms">
-    <a ng-if="hasLink(redirectUri)" ng-href="#/details?uri={{redirectUri | encodeURIComponent}}">{{redirectUri}}</a>
-    <span ng-if="!hasLink(redirectUri)">{{redirectUri}}</span>
+    <a ng-href="#/{{redirectUri | pathEncode}}">{{redirectUri}}</a>
   </dd>
   <dt ng-show="row.referrers">Found on:</dt>
   <dd ng-show="row.referrers" ng-repeat="referrer in row.referrers">
-    <a ng-if="hasLink(referrer.uri)" ng-href="#/details?uri={{referrer.uri | encodeURIComponent}}">{{referrer.uri}}</a>
-    <span ng-if="!hasLink(referrer.uri)">{{referrer.uri}}</span>
+    <a ng-href="#/{{referrer.uri | pathEncode}}">{{referrer.uri}}</a>
   </dd>
 </dl>
 

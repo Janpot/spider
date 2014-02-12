@@ -10,29 +10,17 @@ angular.module('app').config(function (
     controller: 'home'
   });
   
-  $routeProvider.when('/details', {
+  $routeProvider.when('/:uri', {
     templateUrl: 'partials/details.html',
     controller: 'details',
     resolve: {
-      link: function (state, $location) {
-        var uri = $location.search().uri,
-            link = null;
-        
-        console.log(uri);
-        
-        if (state.result) {
-          link = state.result.get(uri);
-        }
-        
-        if (link) {
-          return link;
-        } else {
-          $location.path('/').search({uri: null}).replace();
-        }
+      uri: function ($route, state, $location, base64) {
+        var encodedUri = $route.current.params.uri;
+        return base64.decode(decodeURIComponent(encodedUri));
       }
     }
   });
   
-  $routeProvider.otherwise({redirectTo: '/'});
+  //$routeProvider.otherwise({redirectTo: '/'});
   
 });

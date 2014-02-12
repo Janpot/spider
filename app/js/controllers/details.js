@@ -2,12 +2,14 @@
 
 angular.module('app').controller('details', function (
   $scope,
-  link,
+  uri,
   state
 ) {
   'use strict';
-    
-  $scope.row = link;
+
+  if (state.result) {
+    $scope.row = state.result.get(uri);
+  }
     
   $scope.hasLink = function (uri) {
     return state.result.exists(uri);

@@ -14,7 +14,7 @@
   </thead>
   <tbody>
     <tr ng-repeat="row in result">
-      <td><a ng-href="#/details?uri={{row.uri | encodeURIComponent}}">{{row.uri}}</a></td>
+      <td><a href="#/{{row.uri | pathEncode}}">{{row.uri}}</a></td>
       <td>{{row.statusCode}}</td>
       <td>{{row.type}}</td>
       <td>{{row.size | fileSize:1}}</td>
