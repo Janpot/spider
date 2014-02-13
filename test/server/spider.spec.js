@@ -60,7 +60,7 @@ function expectLinks(linkStream, expects, done) {
 }
 
 
-describe.only('spider', function () {
+describe('spider', function () {
   
   nock.disableNetConnect();
   

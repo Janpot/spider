@@ -1,8 +1,22 @@
-
+input {
+  width: 600px;
+}
 
 td {
-  max-width: 400px;
+  max-width: 600px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+tr.fail {
+  background: red;
+}
+
+tr.warn {
+  background: yellow;
 }

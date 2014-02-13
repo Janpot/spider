@@ -12,7 +12,7 @@ function connect(socket) {
     .on('get', function (options) {
       options = options || {};
       var url = options.url;
-      console.log(options);
+      console.log('stream started');
 
       spiderStream = spider.get(url);
       
@@ -33,7 +33,7 @@ function connect(socket) {
     })
     .on('cancel', function () {
       if (spiderStream) {
-        console.log('canceling');
+        console.log('stream canceled');
         spiderStream.cancel();
       }
     })

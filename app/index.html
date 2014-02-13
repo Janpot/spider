@@ -9,12 +9,13 @@
   </head>
   <body>
     
-    <div ng-controller="controls" class="header">
+    <div ng-controller="controls" class="ng-cloak">
       <form>
-        <input ng-model="uri">
         <button ng-if="project.status === 'idle'" ng-click="crawl(uri)">Crawl</button>
         <button ng-if="project.status === 'crawling'" ng-click="cancel()">Stop</button>
+        <input ng-model="uri">
       </form>
+      Links Crawled: {{project.linksReceived}}
     </div>
     
     <div ng-view="">

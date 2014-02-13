@@ -126,12 +126,12 @@ angular.module('app').factory('project', function (
     this.list = null;
     this._socket = io.connect('/spider');
     this.status = 'idle';
+    this.linksReceived = 0;
     
     this._socket.on('data', function (data) {
+      this.linksReceived += data.length;
       var needsScopeUpdate = this.list.addAll(data);
-      if (needsScopeUpdate) {
-        $rootScope.$apply();
-      }
+      $rootScope.$apply();
     }.bind(this));
     
     this._socket.on('end', function () {
@@ -142,6 +142,7 @@ angular.module('app').factory('project', function (
     
   Project.prototype.crawl = function (uri) {
     if (this.status === 'idle') {
+      this.linksReceived = 0;
       this.status = 'crawling';
       this.uri = uri;
       this.list = new LinkList();
