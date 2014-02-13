@@ -8,6 +8,7 @@ var PROD = tasks.util.env.production;
 gulp.task('scripts', function () {
   gulp.src('app/js/main.js')
     .pipe(tasks.browserify({
+      transform: ['debowerify'],
       insertGlobals : true,
       debug : !PROD
     }))

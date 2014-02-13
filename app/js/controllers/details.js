@@ -3,12 +3,15 @@
 angular.module('app').controller('details', function (
   $scope,
   uri,
-  project
+  project,
+  $location
 ) {
   'use strict';
 
-  if (project.list) {
-    $scope.row = project.list.get(uri);
+  $scope.row = project.list.get(uri);
+  
+  if (!$scope.row) {
+    $location.path('/');
   }
   
 });

@@ -1,19 +1,35 @@
-<table ng-show="project.list.count()">
-  <thead>
-    <tr>
-      <th>Uri</th>
-      <th>Status</th>
-      <th>Type</th>
-      <th>Size</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr ng-repeat="row in project.list.view" ng-class="{fail: row.statusCode >= 400, warn: row.statusCode >= 300 && row.statusCode < 400}">
-      <td><a href="#/{{row.uri | pathEncode}}">{{row.uri}}</a></td>
-      <td>{{row.statusCode}}</td>
-      <td>{{row.type}}</td>
-      <td>{{row.size | fileSize:1}}</td>
-    </tr>
-  </tbody>
-</table>
 
+<div ng-show="pageCount">
+  <div class="row">
+    <ul class="pagination">
+      <li ng-class="{disabled: project.list.page <= 1}">
+        <a href="#" ng-click="goToPage(project.list.page - 1)">&laquo;</a>
+      </li>
+      <li ng-repeat="page in getPages()" ng-class="{active: page === project.list.page}">
+        <a href="#" ng-click="goToPage(page)">{{page}}</a>
+      </li>
+      <li ng-class="{disabled: project.list.page >= pageCount}">
+        <a href="#" ng-click="goToPage(project.list.page + 1)">&raquo;</a>
+      </li>
+    </ul>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Uri</th>
+        <th>Status</th>
+        <th>Type</th>
+        <th>Size</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in project.list.view" ng-class="{danger: row.statusCode >= 400, warning: row.statusCode >= 300 && row.statusCode < 400}">
+        <td><a href="#/{{row.uri | pathEncode}}">{{row.uri}}</a></td>
+        <td>{{row.statusCode}}</td>
+        <td>{{row.type}}</td>
+        <td>{{row.size | fileSize:1}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

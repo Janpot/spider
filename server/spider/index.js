@@ -4,7 +4,7 @@ var request = require('request'),
     cheerio = require('cheerio'),
     URL = require('url'),
     util = require('util'),
-    BufferStream = require('../streams').BufferStream,
+    QueueStream = require('../streams/QueueStream'),
     Q = require('q'),
     checksum = require('checksum');
 
@@ -65,7 +65,7 @@ var HARD_DOWNLOAD_LIMIT = 10000000, //10 MB
 
 
 function Spider(options) {
-  BufferStream.call(this);
+  QueueStream.call(this);
   options = options || {};
   
   this._linkCache = new Cache();
@@ -88,7 +88,7 @@ function Spider(options) {
     MAX_COUNT
   );
 }
-util.inherits(Spider, BufferStream);
+util.inherits(Spider, QueueStream);
 
 Spider.prototype._normalizeUrl = function (url) {
   return URL.parse(url).href;
@@ -204,7 +204,7 @@ Spider.prototype._request = function (url) {
       }
       
       this._enqueue(basic.redirectTo, {
-        redirectFrom: url
+        redirectFroms: [ url ]
       });
       return end(null, basic);
     }

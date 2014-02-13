@@ -1,12 +1,14 @@
 /*global angular*/
 
-require('angular/angular.js');
-require('angular-route/angular-route.js');
-require('angular-animate/angular-animate.js');
+require('angular');
+require('angular-route');
+require('angular-animate');
+require('angular-bootstrap');
 
 angular.module('app', [
   'ngRoute',
-  'ngAnimate'
+  'ngAnimate',
+  'ui.bootstrap'
 ]);
 
 require('./routes');

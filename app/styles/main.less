@@ -1,6 +1,10 @@
-input {
-  width: 600px;
+@import (inline) "../lib/bootstrap/dist/css/bootstrap.css";
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
 }
+
 
 td {
   max-width: 600px;
@@ -11,12 +15,4 @@ td {
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
-}
-
-tr.fail {
-  background: red;
-}
-
-tr.warn {
-  background: yellow;
 }

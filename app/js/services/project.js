@@ -10,17 +10,25 @@ angular.module('app').factory('project', function (
   function LinkList(options) {
     options = options || {};
     this._items = [];
+    this._filtered = [];
+    this._filter = null;
     this._map = {};
-    this._page = 0;
+    this.page = 1;
     this.pageSize = options.pageSize || 50;
     
     this.view = [];
   }
     
   LinkList.prototype.updateView = function () {
-    var startIndex = this._page * this.pageSize,
+    this._applyFilter();
+    
+    // apply constraints
+    this.page = Math.max(this.page, 1);
+    this.page = Math.min(this.page, this.pageCount());
+    
+    var startIndex = (this.page - 1) * this.pageSize,
         endIndex = startIndex + this.pageSize,
-        newView = this._items.slice(startIndex, endIndex),
+        newView = this._filtered.slice(startIndex, endIndex),
         spliceParams = [0, this.view.length].concat(newView),
         hasChanged = false;
     
@@ -118,19 +126,39 @@ angular.module('app').factory('project', function (
     return uri in this._map;
   };
     
+  LinkList.prototype.pageCount = function () {
+    return Math.ceil(this._filtered.length / this.pageSize);
+  };
+    
+  LinkList.prototype.setPage = function (page) {
+    this.page = page;
+    this.updateView();
+  };
+    
+  LinkList.prototype._applyFilter = function () {
+    if (!this._filter) {
+      this._filtered = this._items;
+    } else {
+      this._filtered = this._items.filter(function (item) {
+        return this._filter(item);
+      }.bind(this));
+    }
+  };
+    
     
     
     
   function Project() {
     this.url = null;
-    this.list = null;
+    this.list = new LinkList();
     this._socket = io.connect('/spider');
     this.status = 'idle';
     this.linksReceived = 0;
     
     this._socket.on('data', function (data) {
       this.linksReceived += data.length;
-      var needsScopeUpdate = this.list.addAll(data);
+      this.list.addAll(data);
+      // we might want to throttle this:
       $rootScope.$apply();
     }.bind(this));
     

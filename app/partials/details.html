@@ -1,6 +1,6 @@
 <a href="#/">Back to list</a>
 
-<dl>
+<dl class="dl-horizontal">
   <dt>Uri</dt>
   <dd><a href="{{row.uri}}" target="_blank">{{row.uri}}</a></dd>
   <dt>Status</dt>
@@ -15,7 +15,7 @@
   <dd ng-show="row.redirectTo">
     <a ng-href="#/{{row.redirectTo | pathEncode}}">{{row.redirectTo}}</a>
   </dd>
-  <dt ng-show="row.redirectFroms">Redirects from:</dt>
+  <dt ng-show="row.redirectFroms">Redirected from:</dt>
   <dd ng-show="row.redirectFroms" ng-repeat="redirectUri in row.redirectFroms">
     <a ng-href="#/{{redirectUri | pathEncode}}">{{redirectUri}}</a>
   </dd>

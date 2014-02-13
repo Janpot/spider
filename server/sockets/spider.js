@@ -1,7 +1,7 @@
 'use strict';
 
 var spider = require('../spider'),
-    ThrottleStream = require('../streams').ThrottleStream;
+    ThrottleStream = require('../streams/ThrottleStream');
 
 
 
@@ -25,7 +25,7 @@ function connect(socket) {
           console.log('stream ended');
           socket.emit('end');
         })
-        .on('error', function (error) {
+        .on('error', function () {
           console.log('stream error');
           socket.emit('end');
         });

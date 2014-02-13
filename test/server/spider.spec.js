@@ -197,11 +197,15 @@ describe('spider', function () {
       }, {
         uri: 'http://www.example.com/some-link-2',
         statusCode: 302,
-        redirectFrom: 'http://www.example.com/some-link'
+        redirectFroms: [
+          'http://www.example.com/some-link'
+        ]
       }, {
         uri: 'http://www.example.com/some-link-3',
         statusCode: 200,
-        redirectFrom: 'http://www.example.com/some-link-2'
+        redirectFroms: [
+          'http://www.example.com/some-link-2'
+        ]
       }
     ], done);
   });

@@ -9,17 +9,40 @@
   </head>
   <body>
     
-    <div ng-controller="controls" class="ng-cloak">
-      <form>
-        <button ng-if="project.status === 'idle'" ng-click="crawl(uri)">Crawl</button>
-        <button ng-if="project.status === 'crawling'" ng-click="cancel()">Stop</button>
-        <input ng-model="uri">
-      </form>
-      Links Crawled: {{project.linksReceived}}
+    <div ng-controller="controls" class="navbar navbar-inverse navbar-fixed-top ng-cloak" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Spider</a>
+          <form class="navbar-form navbar-left">
+            <div class="form-group">
+              <button class="btn btn-primary" ng-if="project.status === 'idle'" ng-click="crawl(uri)">Crawl</button>
+              <button class="btn btn-default" ng-if="project.status === 'crawling'" ng-click="cancel()">Stop</button>
+            </div>
+            <div class="form-group">
+              <input class="form-control" type="text" ng-model="uri">
+            </div>
+          </form>
+          <p class="navbar-text">
+            Total: {{project.linksReceived}}
+          </p>
+          <p class="navbar-text">
+            Unique: {{project.list.count()}}
+          </p>
+          <p class="navbar-text">
+            Filtered: {{project.list._filtered.length}}
+          </p>
+          <!--<div class="ng-cloak">
+            <form>
+              <input ng-model="filteredUri" ng-change="applyFilter()">
+            </form>
+          </div>-->
+        </div>
+      </div>
     </div>
     
-    <div ng-view="">
-        Loading...
+    
+    <div ng-view="" class="container">
+
     </div>
     
     <script src="/socket.io/socket.io.js"></script>
