@@ -4,7 +4,7 @@ var request = require('request'),
     cheerio = require('cheerio'),
     URL = require('url'),
     util = require('util'),
-    QueueStream = require('../streams/QueueStream'),
+    PassThrough = require('stream').PassThrough,
     Q = require('q'),
     checksum = require('checksum');
 
@@ -65,7 +65,9 @@ var HARD_DOWNLOAD_LIMIT = 10000000, //10 MB
 
 
 function Spider(options) {
-  QueueStream.call(this);
+  PassThrough.call(this, {
+    objectMode: true
+  });
   options = options || {};
   
   this._linkCache = new Cache();
@@ -88,7 +90,7 @@ function Spider(options) {
     MAX_COUNT
   );
 }
-util.inherits(Spider, QueueStream);
+util.inherits(Spider, PassThrough);
 
 Spider.prototype._normalizeUrl = function (url) {
   return URL.parse(url).href;
@@ -137,7 +139,7 @@ Spider.prototype._consumeQueue = function () {
   
   if (this._queue.length <= 0) {
     if (this._pending <= 0) {
-      this._put(null);
+      this.end();
     }
   } else if (this._pending < this._maxConcurrent) {
     
@@ -151,7 +153,7 @@ Spider.prototype._consumeQueue = function () {
           .forEach(function (key) {
             result[key] = nextUp.extraInfo[key];
           }.bind(this));
-        this._put(result);
+        this.write(result);
       }.bind(this))
       .fin(function () {
         this._pending -= 1;
@@ -182,7 +184,10 @@ Spider.prototype._request = function (url) {
   
   request({
     uri: url,
-    followRedirect: false
+    followRedirect: false,
+    pool: {
+      maxSockets: this._maxConcurrent
+    }
   }, function (err, res, body) {
     if (err) {
       return end(null, {
