@@ -11,26 +11,6 @@ var request = require('request'),
 
 
 
-
-
-
-function extractLinks(uri, body) {
-  var $ = cheerio.load(body);
-    
-  var hrefs = $('[href]').map(function (i, a) {
-    var href = $(a).attr('href');
-    return URL.resolve(uri, href);
-  }).toArray();
-  
-  var srcs = $('[src]').map(function (i, a) {
-    var src = $(a).attr('src');
-    return URL.resolve(uri, src);
-  }).toArray();
-  
-  return srcs.concat(hrefs);
-}
-
-
 function parseContentType(typeStr) {
   var matcher = /([^\/]+)\/([^;]+)/,
       match = matcher.exec(typeStr);
@@ -163,6 +143,25 @@ Spider.prototype._consumeQueue = function () {
   }
 };
 
+Spider.prototype._extractLinks = function (uri, body) {
+  var $ = cheerio.load(body);
+  
+  var result = {};
+    
+  $('[href]').each(function (i, a) {
+    var $a = $(a);
+    var href = $a.attr('href'),
+        resolved = URL.resolve(uri, href);
+    
+    if (!result[resolved]) {
+      result[resolved] = {
+        rel: $a.attr('nofollow')
+      };
+    }
+  });
+  
+  return result;
+};
 
 Spider.prototype._request = function (url) {
   var deferred = Q.defer();
@@ -176,7 +175,7 @@ Spider.prototype._request = function (url) {
     deferred.resolve(toCache);
   }.bind(this);
 
-  var overMax = this._totalDownloadSize >= this.maxDownloadSize;
+  var overMax = this.downloadSizeExceeded();
   
   if (overMax) {
     return end(new Error('Download size exceeded'));
@@ -197,56 +196,49 @@ Spider.prototype._request = function (url) {
     
     this._totalDownloadSize += body.length;
     
-    var basic = {
+    var urlInfo = {
       statusCode: res.statusCode
     };
     
     if (300 <= res.statusCode && res.statusCode < 400) {
-      basic.redirectTo = res.headers.location;
-      if (!basic.redirectTo) {
-        basic.error = 'redirect with no location';
-        return end(null, basic);
+      urlInfo.redirectTo = res.headers.location;
+      if (!urlInfo.redirectTo) {
+        urlInfo.error = 'redirect with no location';
+        return end(null, urlInfo);
       }
       
-      this._enqueue(basic.redirectTo, {
+      this._enqueue(urlInfo.redirectTo, {
         redirectFroms: [ url ]
       });
-      return end(null, basic);
+      return end(null, urlInfo);
     }
     
-    basic.type = parseContentType(res.headers['content-type']);
-    basic.size = res.headers['content-length'] || body.length;
-    basic.checksum = checksum(body);
+    urlInfo.type = parseContentType(res.headers['content-type']);
+    urlInfo.size = res.headers['content-length'] || body.length;
+    urlInfo.checksum = checksum(body);
     
     var host = URL.parse(url).host,
         sameDomain = host === this._mainHost,
-        doCrawl = sameDomain && basic.type === 'text/html';
+        doCrawl = sameDomain && urlInfo.type === 'text/html';
 
     if (doCrawl) {
-      var hrefs = extractLinks(url, body);
-      var counts = {};
-      hrefs.forEach(function (href) {
-        if (counts[href] === undefined) {
-          counts[href] = 1;
-        } else {
-          counts[href] += 1;
-        }
-      });
+      var crawled = this._extractLinks(url, body);
+
       
-      Object.keys(counts)
+      Object.keys(crawled)
         .forEach(function (href) {
-          var thisReferral = {
-            uri: url,
-            count: counts[href]
-          };
+          var urlInfo = crawled[href];
+          urlInfo.referrers = [
+            {
+              uri: url
+            }
+          ];
           
-          this._enqueue(href, {
-            referrers: [ thisReferral ]
-          });
+          this._enqueue(href, urlInfo);
         }.bind(this));
     }
 
-    return end(null, basic);
+    return end(null, urlInfo);
     
   }.bind(this));
   

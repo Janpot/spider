@@ -103,16 +103,11 @@ gulp.task('coverage', function () {
       debugDirectory: 'debug'
     }))
     .pipe(tasks.mocha())
-    .pipe(tasks.coverage.report({
-      outFile: 'coverage.html'
-    }));
-
-// use this instead of report when coverage > 0.0.18
-//    .pipe(tasks.coverage.gather())
-//    .pipe(tasks.coverage.format({
-//      reporter: 'html'
-//    }))
-//    .dest('./coverage.html');
+    .pipe(tasks.coverage.gather())
+    .pipe(tasks.coverage.format({
+      reporter: 'html'
+    }))
+    .pipe(gulp.dest('./coverage'));
 });
 
 

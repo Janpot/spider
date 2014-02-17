@@ -108,28 +108,13 @@ describe('spider', function () {
       {
         uri: 'http://www.example.com/some-css.css',
         referrers: [
-          {
-            uri: 'http://www.example.com/',
-            count: 1
-          }
+          { uri: 'http://www.example.com/' }
         ]
       },
       {
         uri: 'http://www.example.com/some-link',
         referrers: [
-          {
-            uri: 'http://www.example.com/',
-            count: 1
-          }
-        ]
-      },
-      {
-        uri: 'http://www.example.com/some-image.png',
-        referrers: [
-          {
-            uri: 'http://www.example.com/',
-            count: 1
-          }
+          { uri: 'http://www.example.com/' }
         ]
       }
     ], done);
@@ -145,14 +130,7 @@ describe('spider', function () {
     
     expectLinks(spider.get('http://www.example.com/'), [
       { uri: 'http://www.example.com/' },
-      {
-        uri: 'http://www.example.com/some-link',
-        referrers: [
-          {
-            count: 3
-          }
-        ]
-      }
+      { uri: 'http://www.example.com/some-link' }
     ], done);
   });
 

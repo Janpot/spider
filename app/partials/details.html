@@ -1,28 +1,28 @@
-<a href="#/">Back to list</a>
+<div class="container">
+  <a href="#/">Back to list</a>
 
-<dl class="dl-horizontal">
-  <dt>Uri</dt>
-  <dd><a href="{{row.uri}}" target="_blank">{{row.uri}}</a></dd>
-  <dt>Status</dt>
-  <dd>{{row.statusCode}}</dd>
-  <dt>Type</dt>
-  <dd>{{row.type}}</dd>
-  <dt>Checksum</dt>
-  <dd>{{row.checksum}}</dd>
-  <dt>Size</dt>
-  <dd>{{row.size | fileSize:1}}</dd>
-  <dt ng-show="row.redirectTo">Redirects to:</dt>
-  <dd ng-show="row.redirectTo">
-    <a ng-href="#/{{row.redirectTo | pathEncode}}">{{row.redirectTo}}</a>
-  </dd>
-  <dt ng-show="row.redirectFroms">Redirected from:</dt>
-  <dd ng-show="row.redirectFroms" ng-repeat="redirectUri in row.redirectFroms">
-    <a ng-href="#/{{redirectUri | pathEncode}}">{{redirectUri}}</a>
-  </dd>
-  <dt ng-show="row.referrers">Found on:</dt>
-  <dd ng-show="row.referrers" ng-repeat="referrer in row.referrers">
-    {{referrer.count}} time(s) on
-    <a ng-href="#/{{referrer.uri | pathEncode}}">{{referrer.uri}}</a>
-  </dd>
-</dl>
-
+  <dl class="dl-horizontal">
+    <dt>Uri</dt>
+    <dd><a href="{{row.uri}}" target="_blank">{{row.uri}}</a></dd>
+    <dt>Status</dt>
+    <dd>{{row.statusCode}}</dd>
+    <dt>Type</dt>
+    <dd>{{row.type}}</dd>
+    <dt>Checksum</dt>
+    <dd>{{row.checksum}}</dd>
+    <dt>Size</dt>
+    <dd>{{row.size | fileSize:1}}</dd>
+    <dt ng-show="row.redirectTo">Redirects to:</dt>
+    <dd ng-show="row.redirectTo">
+      <a ng-href="#/{{row.redirectTo | pathEncode}}">{{row.redirectTo}}</a>
+    </dd>
+    <dt ng-show="row.redirectFroms">Redirected from:</dt>
+    <dd ng-show="row.redirectFroms" ng-repeat="redirectUri in row.redirectFroms">
+      <a ng-href="#/{{redirectUri | pathEncode}}">{{redirectUri}}</a>
+    </dd>
+    <dt ng-show="row.referrers">Found on:</dt>
+    <dd ng-show="row.referrers" ng-repeat="referrer in row.referrers">
+      <a ng-href="#/{{referrer.uri | pathEncode}}">{{referrer.uri}}</a>
+    </dd>
+  </dl>
+</div>

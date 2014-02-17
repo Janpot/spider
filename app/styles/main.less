@@ -16,3 +16,42 @@ td {
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
+
+table.flying {
+  thead {
+    position: fixed;
+    background: #FFF;
+  }
+  tbody:before {
+    content: "";
+    display: block;
+    height: 31px;
+  }
+}
+
+.navbar {
+  min-width: 1120px;
+  background: #FFF;
+  border-color: transparent;
+}
+
+
+.navbar-input-group {
+  font-size: 0px; /*removes whitespace between button and input*/
+  
+  .form-control {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+  
+  .btn {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-left: 0px;
+  }
+}
+
+.form-control.uri-input {
+  width: 400px;
+}

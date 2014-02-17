@@ -12,15 +12,8 @@
     "q": "~1.0.0",
     "checksum": "~0.1.1"
   },
-  "napa": {
-    "angular": "angular/bower-angular#v1.2.12",
-    "angular-route": "angular/bower-angular-route#v1.2.12",
-    "angular-animate": "angular/bower-angular-animate#v1.2.12",
-    "angular-bootstrap": "angular-ui/bootstrap#0.10.0",
-    "bootstrap": "twbs/bootstrap#v3.1.0"
-  },
   "devDependencies": {
-    "napa": "~0.3.0",
+    "nock": "~0.27.2",
     "mocha": "~1.17.1",
     "chai": "~1.9.0",
     "jshint": "~2.4.1",
@@ -43,13 +36,11 @@
     "gulp-if": "0.0.5",
     "gulp-mocha": "~0.4.1",
     "gulp-karma": "0.0.2",
-    "nock": "~0.27.2",
     "gulp-nodemon": "~0.1.2",
-    "gulp-coverage": "0.0.17",
+    "gulp-coverage": "~0.0.18",
     "debowerify": "~0.5.2"
   },
   "scripts": {
-    "install": "napa",
     "build": "gulp build",
     "start": "node .",
     "test": "gulp test"
