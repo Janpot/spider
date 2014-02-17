@@ -21,14 +21,14 @@
     "karma-mocha": "~0.1.1",
     "karma-mocha-reporter": "~0.2.0",
     "karma-chrome-launcher": "~0.1.2",
-    "karma-chai": "0.0.2",
+    "karma-chai": "0.1.0",
     "karma-phantomjs-launcher": "~0.1.2",
     "gulp": "~3.5.2",
     "gulp-load-tasks": "~0.1.1",
-    "gulp-browserify": "~0.4.3",
+    "gulp-browserify": "~0.4.5",
     "gulp-less": "~1.2.1",
     "gulp-util": "~2.2.14",
-    "gulp-jshint": "~1.4.0",
+    "gulp-jshint": "~1.4.2",
     "gulp-recess": "~0.2.0",
     "gulp-csso": "~0.2.3",
     "gulp-ngmin": "~0.1.2",
@@ -38,7 +38,7 @@
     "gulp-karma": "0.0.2",
     "gulp-nodemon": "~0.1.2",
     "gulp-coverage": "~0.0.18",
-    "debowerify": "~0.5.2"
+    "debowerify": "~0.6.0"
   },
   "scripts": {
     "build": "gulp build",
