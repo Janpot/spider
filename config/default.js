@@ -2,7 +2,6 @@
 
 module.exports = {
   
-  port: 80,
-  mountDist: true
+  port: 3000
   
 };

@@ -23,5 +23,6 @@ config/*
 .build/*
 .coverdata/*
 .coverrun
+.vagrant
 coverage.html
 

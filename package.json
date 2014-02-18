@@ -47,5 +47,10 @@
   },
   "engines": {
     "node": ">=0.10"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/janpot/spider.git"
+  },
+  "private": true
 }

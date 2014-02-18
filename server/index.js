@@ -6,3 +6,4 @@ var config = require('config'),
 var server = require('http').createServer(app);
 socketServer.init(server);
 server.listen(config.port);
+console.log('listening on http://%s:%s', 'localhost', server.address().port);

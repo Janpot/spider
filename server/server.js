@@ -16,17 +16,14 @@ app.configure(function () {
   // server
   app.use(app.router);
   
-  if (config.mountDist) {
-    var distFolder = path.resolve(__dirname, '../dist');
-    app.set('views', distFolder);
-    app.use(express.static(distFolder));
-  } else {
-    var appFolder = path.resolve(__dirname, '../app'),
-        buildFolder = path.resolve(__dirname, '../.build');
-    app.set('views', appFolder);
-    app.use(express.static(buildFolder));
-    app.use(express.static(appFolder));
-  }
+  var buildFolder = path.resolve(__dirname, '../.build'),
+      appFolder = path.resolve(__dirname, '../app');
+  
+  // serve built files first
+  app.use(express.static(buildFolder));
+
+  // fall back to original
+  app.use(express.static(appFolder));
   
 });
 
