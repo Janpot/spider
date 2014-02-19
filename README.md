@@ -6,15 +6,12 @@ Web crawler with angular frontend and socket.io
 install:
 --------
 
-    npm i -g gulp-cli && npm i
+    $ npm i -g gulp bower
+    $ bower i && npm i && gulp build
     
 tasks:
 ------
 
-    gulp build
-    gulp develop
-    gulp test
-    gulp mocha-watch
-    ...
-    
-`gulp develop` builds sources, starts the server with `nodemon` and builds `js`, `LESS` on change.
+Use `gulp build` for generating all javascript and css files.
+Use `gulp develop` for development. It will start the server and rebuild files on changes.
+Use `gulp mocha` and `gulp mocha-watch` for testing.
