@@ -38,10 +38,10 @@ gulp.task('build', ['scripts', 'less']);
 
 
 gulp.task('watch', function () {
-  
+
   gulp.watch('app/js/**/*.js', ['scripts']);
   gulp.watch('app/styles/**/*.less', ['less']);
-  
+
 });
 
 
@@ -62,7 +62,7 @@ gulp.task('jshint', function () {
   gulp.src(['app/js/**/*.js'])
     .pipe(tasks.jshint('./.jshintrc'))
     .pipe(tasks.jshint.reporter('jshint-stylish'));
-  
+
   gulp.src(['server/**/*.js'])
     .pipe(tasks.jshint('./.jshintrc'))
     .pipe(tasks.jshint.reporter('jshint-stylish'));
@@ -116,7 +116,7 @@ gulp.task('karma', function () {
     './.build/js/main.js',
     './test/karma/**/*.spec.js'
   ];
-  
+
   return gulp.src(testFiles)
     .pipe(tasks.karma({
       configFile: 'karma.conf.js',
@@ -130,14 +130,3 @@ gulp.task('test', ['mocha', 'karma']);
 
 
 gulp.task('default', ['lint', 'build']);
-
-
-
-
-
-
-
-
-
-
-
