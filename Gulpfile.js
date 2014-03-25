@@ -84,7 +84,7 @@ gulp.task('lint', ['jshint:client', 'jshint:server', 'recess']);
 
 
 gulp.task('mocha', function () {
-  gulp.src(['./test/server/**/*.spec.js'], { read: false })
+  return gulp.src(['./test/server/**/*.spec.js'], { read: false })
     .pipe(tasks.mocha())
     .on('error', function (error) {
       console.log(error.name, error.message);
