@@ -18,4 +18,4 @@ Use `gulp mocha` and `gulp mocha-watch` for testing.
 
 
 [depstat-url]: https://david-dm.org/Janpot/spider
-[depstat-image]: https://david-dm.org/Janpot/spider?theme=shields.io
+[depstat-image]: https://david-dm.org/Janpot/spider.png?theme=shields.io
