@@ -14,12 +14,14 @@ gulp.task('scripts', function () {
     .transform('debowerify')
     .bundle({ debug: !PROD })
     .on('error', function (error) {
-      tasks.util.log(error.name, error.message);
+      tasks.util.log(tasks.util.colors.red(error.message));
     })
     .pipe(source('main.js'))
-    .pipe(tasks.if(PROD, tasks.buffer()))
-    .pipe(tasks.if(PROD, tasks.ngmin()))
-    .pipe(tasks.if(PROD, tasks.uglify()))
+    .pipe(tasks.if(PROD, tasks.util.combine(
+      tasks.buffer(),
+      tasks.ngmin(),
+      tasks.uglify()
+    )()))
     .pipe(gulp.dest('./.build/js'));
 });
 
@@ -87,7 +89,7 @@ gulp.task('mocha', function () {
   return gulp.src(['./test/server/**/*.spec.js'], { read: false })
     .pipe(tasks.mocha())
     .on('error', function (error) {
-      console.log(error.name, error.message);
+      tasks.util.log(tasks.util.colors.red(error.message));
     });
 });
 
