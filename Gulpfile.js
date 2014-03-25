@@ -1,12 +1,12 @@
 'use strict';
 
-var gulp = require('gulp');
+var gulp  = require('gulp');
 var tasks = require('gulp-load-tasks')();
 
 var PROD = tasks.util.env.production;
 
 gulp.task('scripts', function () {
-  gulp.src('app/js/main.js')
+  return gulp.src('app/js/main.js')
     .pipe(tasks.browserify({
       transform: ['debowerify'],
       insertGlobals : true,
@@ -25,7 +25,7 @@ gulp.task('scripts', function () {
 
 
 gulp.task('less', function () {
-  gulp.src('app/styles/main.less')
+  return gulp.src('app/styles/main.less')
     .pipe(tasks.less())
     .pipe(tasks.if(PROD, tasks.csso()))
     .pipe(gulp.dest('./.build/styles'));
@@ -46,7 +46,7 @@ gulp.task('watch', function () {
 
 
 gulp.task('nodemon', function () {
-  tasks.nodemon({
+  return tasks.nodemon({
     options: '-e js,json --watch server --watch config',
     script: './server'
   });
@@ -58,23 +58,25 @@ gulp.task('develop', ['build', 'watch', 'nodemon']);
 
 
 
-gulp.task('jshint', function () {
-  gulp.src(['app/js/**/*.js'])
+gulp.task('jshint:client', function () {
+  return gulp.src(['app/js/**/*.js'])
     .pipe(tasks.jshint('./.jshintrc'))
     .pipe(tasks.jshint.reporter('jshint-stylish'));
+});
 
-  gulp.src(['server/**/*.js'])
+gulp.task('jshint:server', function () {
+  return gulp.src(['server/**/*.js'])
     .pipe(tasks.jshint('./.jshintrc'))
     .pipe(tasks.jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('recess', function () {
-  gulp.src('app/styles/main.less')
+  return gulp.src('app/styles/main.less')
     .pipe(tasks.recess());
 });
 
 
-gulp.task('lint', ['jshint', 'recess']);
+gulp.task('lint', ['jshint:client', 'jshint:server', 'recess']);
 
 
 
@@ -97,7 +99,7 @@ gulp.task('mocha-watch', ['mocha'], function () {
 
 
 gulp.task('coverage', function () {
-  gulp.src(['./test/server/**/*.spec.js'], { read: false })
+  return gulp.src(['./test/server/**/*.spec.js'], { read: false })
     .pipe(tasks.coverage.instrument({
       pattern: ['server/**/*.js'],
       debugDirectory: 'debug'

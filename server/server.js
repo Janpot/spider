@@ -1,8 +1,7 @@
 'use strict';
 
 var express        = require('express'),
-    path           = require('path'),
-    config         = require('config');
+    path           = require('path');
 
 
 
