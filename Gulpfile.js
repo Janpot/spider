@@ -2,23 +2,24 @@
 
 var gulp  = require('gulp');
 var tasks = require('gulp-load-tasks')();
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
 
 var PROD = tasks.util.env.production;
 
+
+
 gulp.task('scripts', function () {
-  return gulp.src('app/js/main.js')
-    .pipe(tasks.browserify({
-      transform: ['debowerify'],
-      insertGlobals : true,
-      debug : !PROD
-    }))
+  return browserify('./app/js/main.js')
+    .transform('debowerify')
+    .bundle({ debug: !PROD })
     .on('error', function (error) {
       tasks.util.log(error.name, error.message);
     })
+    .pipe(source('main.js'))
+    .pipe(tasks.if(PROD, tasks.buffer()))
     .pipe(tasks.if(PROD, tasks.ngmin()))
-    .pipe(tasks.if(PROD, tasks.uglify({
-      outSourceMap: true
-    })))
+    .pipe(tasks.if(PROD, tasks.uglify()))
     .pipe(gulp.dest('./.build/js'));
 });
 
@@ -37,7 +38,7 @@ gulp.task('build', ['scripts', 'less']);
 
 
 
-gulp.task('watch', function () {
+gulp.task('watch', ['build'], function () {
 
   gulp.watch('app/js/**/*.js', ['scripts']);
   gulp.watch('app/styles/**/*.less', ['less']);
